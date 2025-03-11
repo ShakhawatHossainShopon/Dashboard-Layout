@@ -1,15 +1,16 @@
 "use client";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
-import { FaHome } from "react-icons/fa";
+import { FaHome } from "react-icons/fa"; // Importing the FaHome icon
 
 const navItems = [
   {
     icon: <FaHome />,
     name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+    path: "/", // Path for the link
   },
 ];
 
@@ -17,18 +18,21 @@ const AppSidebar = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
 
+  const isActive = (path) => path === pathname;
+
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white   text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${
           isExpanded || isMobileOpen
             ? "w-[290px]"
             : isHovered
             ? "w-[290px]"
             : "w-[90px]"
-        } ${
-        isMobileOpen ? "translate-x-0" : "-translate-x-full"
-      } lg:translate-x-0`}
+        } 
+        ${
+          isMobileOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0`}
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -65,11 +69,46 @@ const AppSidebar = () => {
           )}
         </Link>
       </div>
+
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>
-              <p>menues</p>
+              <h2
+                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                  !isExpanded && !isHovered
+                    ? "lg:justify-center"
+                    : "justify-start"
+                }`}
+              >
+                {isExpanded || isHovered || isMobileOpen ? "Menu" : "☰"}
+              </h2>
+              {/* Loop through navItems to render each item */}
+              <ul className="flex flex-col gap-4">
+                {navItems.map((nav, index) => (
+                  <li key={index}>
+                    <Link
+                      href={nav.path}
+                      className={`${
+                        isActive(nav.path)
+                          ? "bg-blue-500 text-white"
+                          : "text-gray-600"
+                      } menu-item group flex items-center p-3 rounded-lg hover:bg-gray-200`}
+                    >
+                      <span
+                        className={`${
+                          isActive(nav.path) ? "text-white" : "text-gray-600"
+                        } flex items-center mr-3`}
+                      >
+                        {nav.icon}
+                      </span>
+                      {(isExpanded || isHovered || isMobileOpen) && (
+                        <span>{nav.name}</span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </nav>
